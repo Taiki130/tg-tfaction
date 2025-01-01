@@ -36,12 +36,12 @@
               ["${{github.event.repository.name}}"]
   
         - name: Set up
-          uses: Taiki130/tfaction/setup@feature/detect-local-module-changed-for-terragrunt
+          uses: Taiki130/tfaction/setup@feature/test-for-terragrunt
           with:
             github_token: ${{steps.token.outputs.token}}
   
         - name: Plan
-          uses: Taiki130/tfaction/plan@feature/detect-local-module-changed-for-terragrunt
+          uses: Taiki130/tfaction/plan@feature/test-for-terragrunt
           with:
             github_token: ${{steps.token.outputs.token}}
           env:
