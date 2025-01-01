@@ -1,0 +1,76 @@
+name: Path filter
+on:
+  workflow_call:
+    secrets:
+      gh_app_id:
+        required: false
+      gh_app_private_key:
+        required: false
+    outputs:
+      merge_commit_sha:
+        value: ${{jobs.path-filter.outputs.merge_commit_sha}}
+      update-aqua-checksums:
+        value: ${{jobs.path-filter.outputs.update-aqua-checksums}}
+      renovate-config-validator:
+        value: ${{jobs.path-filter.outputs.renovate-config-validator}}
+      conftest-verify:
+        value: ${{jobs.path-filter.outputs.conftest-verify}}
+      opa-fmt:
+        value: ${{jobs.path-filter.outputs.opa-fmt}}
+      ghalint:
+        value: ${{jobs.path-filter.outputs.ghalint}}
+jobs:
+  path-filter:
+    # Get changed files to filter jobs
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    permissions: {}
+    outputs:
+      merge_commit_sha: ${{steps.pr.outputs.merge_commit_sha}}
+      update-aqua-checksums: ${{steps.changes.outputs.update-aqua-checksums}}
+      renovate-config-validator: ${{steps.changes.outputs.renovate-config-validator}}
+      conftest-verify: ${{steps.changes.outputs.conftest-verify}}
+      opa-fmt: ${{steps.changes.outputs.opa-fmt}}
+      ghalint: ${{steps.changes.outputs.ghalint}}
+    steps:
+      - uses: actions/create-github-app-token@c1a285145b9d317df6ced56c09f525b5c2b6f755 # v1.11.1
+        id: generate_token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.gh_app_private_key }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{github.event.repository.name}}
+      - uses: suzuki-shunsuke/get-pr-action@b002e41164d7a39586b41f17f9caca4e98a1efe4 # v0.1.0
+        id: pr
+        with:
+          github_token: ${{steps.generate_token.outputs.token}}
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
+        id: changes
+        with:
+          token: ${{steps.generate_token.outputs.token}}
+          filters: |
+            update-aqua-checksums:
+              - aqua/**
+              - .github/workflows/tfaction-plan.yaml
+              - .github/workflows/wc-update-aqua-checksums.yaml
+
+            renovate-config-validator:
+              - renovate.json5
+              - .github/workflows/tfaction-plan.yaml
+              - .github/workflows/wc-renovate-config-validator.yaml
+
+            conftest-verify:
+              - "**.rego"
+              - aqua/imports/conftest.yaml
+              - .github/workflows/wc-conftest-verify.yaml
+              - .github/workflows/tfaction-plan.yaml
+
+            opa-fmt:
+              - "**.rego"
+              - .github/workflows/wc-opa-fmt.yaml
+              - .github/workflows/tfaction-plan.yaml
+              - aqua/imports/opa.yaml
+
+            ghalint:
+              - .github/workflows/*
+              - aqua/imports/ghalint.yaml

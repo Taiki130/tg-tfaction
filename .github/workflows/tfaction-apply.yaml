@@ -1,0 +1,94 @@
+name: tfaction apply
+on:
+  push:
+    branches: [main]
+env:
+  TFACTION_IS_APPLY: 'true'
+jobs:
+  setup:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # For checkout a private repository
+      pull-requests: write # For ci-info and github-comment
+    outputs:
+      targets: ${{ steps.list-targets.outputs.targets }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: aquaproj/aqua-installer@f13c5d2f0357708d85477aabe50fd3f725528745 # v3.1.0
+        with:
+          aqua_version: v2.41.0
+      - uses: Taiki130/tfaction/list-targets@feature/test-for-terragrunt
+        id: list-targets
+  apply:
+    timeout-minutes: 60
+    name: "apply (${{matrix.target.target}})"
+    runs-on: ${{matrix.target.runs_on}}
+    needs: setup
+    # if services is empty, the build job is skipped
+    if: ${{join(fromJSON(needs.setup.outputs.targets), '') != ''}}
+    strategy:
+      fail-fast: false
+      matrix:
+        target: ${{fromJSON(needs.setup.outputs.targets)}}
+    env:
+      TFACTION_TARGET: ${{matrix.target.target}}
+      TFACTION_JOB_TYPE: ${{matrix.target.job_type}}
+    permissions:
+      id-token: write # For OIDC
+      contents: read # To checkout a private repository
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/create-github-app-token@c1a285145b9d317df6ced56c09f525b5c2b6f755 # v1.11.1
+        id: generate_token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: "${{github.event.repository.name}}"
+      - uses: aquaproj/aqua-installer@f13c5d2f0357708d85477aabe50fd3f725528745 # v3.1.0
+        with:
+          aqua_version: v2.41.0
+        env:
+          AQUA_GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+      - uses: Taiki130/tfaction/js@feature/test-for-terragrunt
+        with:
+          action: export-secrets
+          # If this action doesn't export secrets as you expect, please check if secrets are passed to this action properly.
+          # If you use reusable workflows, maybe secrets aren't passed to the reusable workflow.
+          # If so, please pass secrets properly.
+          #
+          # - https://docs.github.com/en/actions/using-workflows/reusing-workflows#passing-inputs-and-secrets-to-a-reusable-workflow
+          # - https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idsecrets
+          secrets: ${{ toJSON(secrets) }}
+      # This is required to download private modules in `terraform init`
+      - run: |
+          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository_owner }}".insteadOf "ssh://git@github.com/${{ github.repository_owner }}"
+          gh auth setup-git
+        env:
+          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+      - run: tfaction get-or-create-drift-issue
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
+      - uses: Taiki130/tfaction/setup@feature/test-for-terragrunt
+        with:
+          github_token: ${{ steps.generate_token.outputs.token }}
+      - uses: Taiki130/tfaction/apply@feature/test-for-terragrunt
+        with:
+          github_token: ${{ steps.generate_token.outputs.token }}
+        env:
+          TF_VAR_github_run_id: ${{ github.run_id }}
+      - uses: Taiki130/tfaction/create-follow-up-pr@feature/test-for-terragrunt
+        if: failure()
+        with:
+          github_token: ${{steps.generate_token.outputs.token}}
+      - uses: Taiki130/tfaction/update-drift-issue@feature/test-for-terragrunt
+        if: always()
+        with:
+          status: ${{job.status}}
+          github_token: ${{steps.generate_token.outputs.token}}
