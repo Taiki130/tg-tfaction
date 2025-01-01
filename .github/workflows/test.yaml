@@ -41,7 +41,7 @@
             github_token: ${{steps.token.outputs.token}}
   
         - name: Plan
-          uses: Taiki130/tfaction/plan@v1.14.0
+          uses: suzuki-shunsuke/tfaction/plan@v1.14.0
           with:
             github_token: ${{steps.token.outputs.token}}
           env:
