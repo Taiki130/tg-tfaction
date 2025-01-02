@@ -2,9 +2,9 @@
 plan_workflow_name: terraform-plan
 update_local_path_module_caller:
   enabled: true
+terraform_command: terragrunt
 target_groups:
   - working_directory: "terragrunt"
     target: "terragrunt"
-    terraform_command: terragrunt
     env:
       TERRAGRUNT_LOG_DISABLE: "true"
