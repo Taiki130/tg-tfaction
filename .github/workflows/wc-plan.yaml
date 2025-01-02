@@ -47,7 +47,7 @@ jobs:
           aqua_version: v2.41.0
         env:
           AQUA_GITHUB_TOKEN: ${{steps.generate_token.outputs.token}}
-      - uses: Taiki130/tfaction/js@feature/test-for-terragrunt
+      - uses: suzuki-shunsuke/tfaction/js@1bfb14d12411f6872d897f96865ae0c9cebe2fe3 # v1.14.0
         with:
           action: export-secrets
           # If this action doesn't export secrets as you expect, please check if secrets are passed to this action properly.
@@ -64,12 +64,12 @@ jobs:
           gh auth setup-git
         env:
           GITHUB_TOKEN: ${{steps.generate_token.outputs.token}}
-      - uses: Taiki130/tfaction/setup@feature/test-for-terragrunt
+      - uses: suzuki-shunsuke/tfaction/setup@1bfb14d12411f6872d897f96865ae0c9cebe2fe3 # v1.14.0
         with:
           github_token: ${{steps.generate_token.outputs.token}}
         env:
           GITHUB_TOKEN: ${{steps.generate_token.outputs.token}} # For GitHub Provider
-      - uses: Taiki130/tfaction/js@feature/test-for-terragrunt
+      - uses: suzuki-shunsuke/tfaction/js@1bfb14d12411f6872d897f96865ae0c9cebe2fe3 # v1.14.0
         id: target-config
         with:
           action: get-target-config
@@ -82,14 +82,14 @@ jobs:
       #   working-directory: ${{ steps.target-config.outputs.working_directory }}
       # env:
       #   GITHUB_TOKEN: ${{steps.generate_token.outputs.token}} # For github-comment
-      - uses: Taiki130/tfaction/test@feature/test-for-terragrunt
+      - uses: suzuki-shunsuke/tfaction/test@1bfb14d12411f6872d897f96865ae0c9cebe2fe3 # v1.14.0
         with:
           github_token: ${{steps.generate_token.outputs.token}}
         env:
           GITHUB_TOKEN: ${{steps.generate_token.outputs.token}} # For GitHub Provider and reviewdog and github-comment
           TF_VAR_github_run_id: ${{ github.run_id }}
 
-      - uses: Taiki130/tfaction/plan@feature/test-for-terragrunt
+      - uses: suzuki-shunsuke/tfaction/plan@1bfb14d12411f6872d897f96865ae0c9cebe2fe3 # v1.14.0
         with:
           github_token: ${{steps.generate_token.outputs.token}}
         env:

@@ -20,7 +20,7 @@ jobs:
       - uses: aquaproj/aqua-installer@f13c5d2f0357708d85477aabe50fd3f725528745 # v3.1.0
         with:
           aqua_version: v2.41.0
-      - uses: Taiki130/tfaction/list-targets@feature/test-for-terragrunt
+      - uses: suzuki-shunsuke/tfaction/list-targets@1bfb14d12411f6872d897f96865ae0c9cebe2fe3 # v1.14.0
         id: list-targets
   apply:
     timeout-minutes: 60
@@ -55,7 +55,7 @@ jobs:
           aqua_version: v2.41.0
         env:
           AQUA_GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
-      - uses: Taiki130/tfaction/js@feature/test-for-terragrunt
+      - uses: suzuki-shunsuke/tfaction/js@1bfb14d12411f6872d897f96865ae0c9cebe2fe3 # v1.14.0
         with:
           action: export-secrets
           # If this action doesn't export secrets as you expect, please check if secrets are passed to this action properly.
@@ -75,19 +75,19 @@ jobs:
         shell: bash
         env:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
-      - uses: Taiki130/tfaction/setup@feature/test-for-terragrunt
+      - uses: suzuki-shunsuke/tfaction/setup@1bfb14d12411f6872d897f96865ae0c9cebe2fe3 # v1.14.0
         with:
           github_token: ${{ steps.generate_token.outputs.token }}
-      - uses: Taiki130/tfaction/apply@feature/test-for-terragrunt
+      - uses: suzuki-shunsuke/tfaction/apply@1bfb14d12411f6872d897f96865ae0c9cebe2fe3 # v1.14.0
         with:
           github_token: ${{ steps.generate_token.outputs.token }}
         env:
           TF_VAR_github_run_id: ${{ github.run_id }}
-      - uses: Taiki130/tfaction/create-follow-up-pr@feature/test-for-terragrunt
+      - uses: suzuki-shunsuke/tfaction/create-follow-up-pr@1bfb14d12411f6872d897f96865ae0c9cebe2fe3 # v1.14.0
         if: failure()
         with:
           github_token: ${{steps.generate_token.outputs.token}}
-      - uses: Taiki130/tfaction/update-drift-issue@feature/test-for-terragrunt
+      - uses: suzuki-shunsuke/tfaction/update-drift-issue@1bfb14d12411f6872d897f96865ae0c9cebe2fe3 # v1.14.0
         if: always()
         with:
           status: ${{job.status}}
