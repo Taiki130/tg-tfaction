@@ -8,3 +8,4 @@ packages:
   - import: imports/*.yaml
   - name: suzuki-shunsuke/tfaction-go@v0.2.3
   - name: opentofu/opentofu@v1.8.8
+  - name: gruntwork-io/terragrunt@v0.71.1
