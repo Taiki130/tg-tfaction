@@ -1,5 +1,6 @@
 ---
 plan_workflow_name: terraform-plan
+update_local_path_module_caller: true
 target_groups:
   - working_directory: "terragrunt"
     target: "terragrunt"
