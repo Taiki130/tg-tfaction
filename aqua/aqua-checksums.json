@@ -1,6 +1,26 @@
 {
   "checksums": [
     {
+      "id": "github_release/github.com/aquasecurity/trivy/v0.58.1/trivy_0.58.1_Linux-64bit.tar.gz",
+      "checksum": "21A5EEA31D072B34A6284855249F4074FF43C618D398F9EC328BEF4FF7C2FA0D",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/aquasecurity/trivy/v0.58.1/trivy_0.58.1_Linux-ARM64.tar.gz",
+      "checksum": "29EC9C3AF77A00234860F4A9C48E2DD7691E939924DA5D76C259E46C614E2545",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/aquasecurity/trivy/v0.58.1/trivy_0.58.1_macOS-64bit.tar.gz",
+      "checksum": "4F939F363D23EEB4D6181B2C38C518DB38D94987565A8FA5EC9E037972E4B811",
+      "algorithm": "sha256"
+    },
+    {
+      "id": "github_release/github.com/aquasecurity/trivy/v0.58.1/trivy_0.58.1_macOS-ARM64.tar.gz",
+      "checksum": "499A64A911A1AC80FCC26D619CDC1BDB05528D8B1BD0490F01A8324AA6EC6E13",
+      "algorithm": "sha256"
+    },
+    {
       "id": "github_release/github.com/gruntwork-io/terragrunt/v0.71.1/terragrunt_darwin_amd64",
       "checksum": "71F0DBBDD1C503CE495CCE4CE36716B35ED8EFA087AAC681A82BA00B1AF57153",
       "algorithm": "sha256"
