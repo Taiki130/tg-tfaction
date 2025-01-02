@@ -1,5 +1,10 @@
 ---
 plan_workflow_name: terraform-plan
+update_local_path_module_caller:
+  enabled: true
+tflint:
+  enabled: false
+
 target_groups:
   - working_directory: "terragrunt"
     target: "terragrunt"
